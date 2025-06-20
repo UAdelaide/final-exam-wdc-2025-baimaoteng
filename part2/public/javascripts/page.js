@@ -201,13 +201,42 @@ function login(){
 
 }
 
-function logout(){
+// Authentication check for protected pages
+async function checkAuthentication() {
+  try {
+    const response = await fetch('/api/users/me');
+    if (!response.ok) {
+      // Not authenticated, redirect to login
+      window.location.href = '/';
+      return null;
+    }
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    // Error checking auth, redirect to login
+    window.location.href = '/';
+    return null;
+  }
+}
 
-    // Create AJAX Request
-    var xmlhttp = new XMLHttpRequest();
+// Logout function
+async function logout() {
+  try {
+    await fetch('/api/users/logout', { method: 'POST' });
+    window.location.href = '/';
+  } catch (error) {
+    console.error('Logout error:', error);
+    window.location.href = '/';
+  }
+}
 
-    // Open connection to server & send the post data using a POST request
-    xmlhttp.open("POST", "/users/logout", true);
-    xmlhttp.send();
-
+// Check if user has correct role for current page
+function checkUserRole(user, requiredRole) {
+  if (user.role !== requiredRole) {
+    // Wrong role, redirect to correct dashboard
+    const correctUrl = user.role === 'owner' ? '/owner-dashboard.html' : '/walker-dashboard.html';
+    window.location.href = correctUrl;
+    return false;
+  }
+  return true;
 }
