@@ -3,173 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WDC 2207 Dog Walking Service</title>
-    <!-- Vue 3 -->
+    <title>PawPals Student Dog Walking</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         body {
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
-            background-color: #0000FF; /* Bright blue */
-            color: #FFFF00; /* Bright yellow text */
-            text-align: center;
-            overflow: hidden;
+            background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00);
+            font-family: Comic Sans MS, cursive;
+            margin: 0;
+            overflow-x: hidden;
         }
-        #app {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-        }
-        .header {
-            background-color: #FF00FF; /* Magenta */
+
+        .container {
+            background: rgba(255, 255, 255, 0.3);
             padding: 5px;
-            font-size: 1.2rem;
-            color: #00FF00; /* Lime green */
+            margin: 10px 200px 10px 50px;
         }
-        .blinking-text {
-            animation: blinker 1s linear infinite;
+
+        .nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background: #333;
+            padding: 2px;
+            z-index: 999;
         }
-        @keyframes blinker {
-            50% {
-                opacity: 0;
-            }
-        }
-        .dog-of-the-day {
-            margin-top: 20px;
-            border: 5px dotted #FF0000; /* Red */
-            padding: 10px;
-            display: inline-block;
-            background-color: #FFFFFF;
-            color: #000000;
-        }
-        .dog-image {
-            width: 300px;
-            height: auto;
-            border: 3px solid #000000;
-        }
-        .button-container {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-        }
-        .small-button {
+
+        .nav a {
+            color: #555;
             font-size: 8px;
-            padding: 2px 4px;
-            background-color: #FFA500; /* Orange */
-            color: #000000;
-            border: 1px solid black;
-            cursor: pointer;
+            margin: 0 1px;
+            text-decoration: none;
         }
-        .top-right-link {
-            position: absolute;
-            top: 100px;
-            right: 50px;
+
+        h1 {
+            color: #ffff00;
+            font-size: 72px;
+            text-shadow: 3px 3px 6px #000;
+            animation: blink 0.5s infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr 1.5fr;
+            gap: 3px;
             font-size: 10px;
+        }
+
+        .dog-section {
+            background: #ffa500;
+            padding: 5px;
+            position: relative;
+        }
+
+        .dog-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            filter: sepia(50%) contrast(200%);
             transform: rotate(-15deg);
         }
-        .marquee {
-            width: 100%;
-            overflow: hidden;
-            background-color: #00FFFF; /* Cyan */
-            color: #000000;
-            position: fixed;
-            bottom: 0;
+
+        .btn {
+            background: #ff00ff;
+            color: #ffff00;
+            border: none;
+            padding: 3px 5px;
+            font-size: 9px;
+            cursor: pointer;
+            margin: 1px;
         }
-        .hidden-nav {
-            position: absolute;
+
+        .btn:hover {
+            background: #00ffff;
+        }
+
+        .popup {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            display: none;
+            background: #fff;
+            border: 5px solid #f00;
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
-        .container:hover .hidden-nav {
-            display: block;
+
+        .close-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 15px;
+            height: 15px;
+            background: #f00;
+            color: #fff;
+            border: none;
+            font-size: 8px;
+            cursor: pointer;
+        }
+
+        .form-section {
+            background: #00ff00;
+            padding: 5px;
+        }
+
+        input, select {
+            width: 90%;
+            margin: 2px 0;
+            padding: 2px;
+            font-size: 8px;
+            border: 1px solid #999;
+        }
+
+        .info-box {
+            background: #ff69b4;
+            color: #00008b;
+            padding: 10px;
+            margin: 5px;
+            font-size: 11px;
+            line-height: 1;
+        }
+
+        .floating-text {
+            position: absolute;
+            animation: float 3s infinite;
+            font-size: 14px;
+            color: #f0f;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .testimonial {
+            background: #87ceeb;
+            color: #8b0000;
+            padding: 5px;
+            margin: 2px;
+            font-size: 9px;
+        }
+
+        .footer {
+            background: #000;
+            color: #222;
+            text-align: center;
+            padding: 5px;
+            font-size: 7px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-
     <div id="app">
-        <header class="header blinking-text">
-            Welcome to WDC 2207 Dog Walking Service!
-        </header>
-
-        <a href="#" class="top-right-link" style="color: #FFC0CB;">Our Process</a>
-
-        <div class="container" style="position: absolute; top: 150px; left: 10px;">
-            <p style="font-size:12px; color: #ADFF2F;">Hover here for menu!</p>
-            <nav class="hidden-nav">
-                <a href="#" style="color: #000000; background-color: #FFFFFF;">Home</a> |
-                <a href="#" style="color: #000000; background-color: #FFFFFF;">Book Now</a> |
-                <a href="#" style="color: #000000; background-color: #FFFFFF;">Contact</a>
-            </nav>
+        <div class="nav">
+            <a>Home</a>
+            <a>About</a>
+            <a>Services</a>
+            <a>Contact</a>
+            <a>Login</a>
+            <a>Register</a>
+            <a>FAQ</a>
+            <a>Blog</a>
+            <a>Careers</a>
         </div>
 
+        <div class="container">
+            <h1>🐕 PAWPALS DOG WALKING!!! 🐕</h1>
 
-        <div class="dog-of-the-day" style="position: absolute; right: 20px; top: 200px;">
-            <h2>Dog of the Day!</h2>
-            <img :src="dogImage" class="dog-image">
-            <h3>Meet {{ dogName }}</h3>
-            <p><strong>Breed:</strong> {{ dogBreed }}</p>
-            <p><strong>Fact:</strong> {{ dogFact }}</p>
+            <div class="content">
+                <div class="dog-section">
+                    <h3 style="color: #00f; font-size: 16px;">DOG OF THE DAY!!!</h3>
+                    <img :src="dogImage" class="dog-img">
+                    <div style="margin-top: 5px;">
+                        <div style="color: #800080;">Name: Fluffy McFlufferson</div>
+                        <div style="color: #008000;">Breed: Golden Retriever Mix</div>
+                        <div style="color: #ff0000;">Age: 3 years</div>
+                        <div style="color: #0000ff;">Walker: Student #47</div>
+                    </div>
+                    <button class="btn" @click="loadNewDog">NEW DOG</button>
+                    <button class="btn" @click="showPopup = true">MORE INFO</button>
+                    <div class="floating-text" style="top: 20px; left: 100px;">CUTE!</div>
+                </div>
+
+                <div class="form-section">
+                    <h4 style="color: #f00;">BOOK A WALK NOW!!!</h4>
+                    <input placeholder="Dog Name">
+                    <input placeholder="Owner Name">
+                    <input placeholder="Phone">
+                    <input placeholder="Email">
+                    <select>
+                        <option>Walk Duration</option>
+                        <option>15 min</option>
+                        <option>30 min</option>
+                        <option>45 min</option>
+                        <option>60 min</option>
+                    </select>
+                    <input type="date">
+                    <input type="time">
+                    <div style="margin-top: 5px;">
+                        <button class="btn">SUBMIT</button>
+                        <button class="btn">CANCEL</button>
+                        <button class="btn">MAYBE LATER</button>
+                        <button class="btn">CALL US</button>
+                        <button class="btn">EMAIL US</button>
+                        <button class="btn">CHAT NOW</button>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>WHY CHOOSE US???</h4>
+                    <div>• Students love dogs!</div>
+                    <div>• Cheap prices!</div>
+                    <div>• Available sometimes!</div>
+                    <div>• We walk dogs!</div>
+                    <div>• Dogs like us!</div>
+                    <div>• We have an app!</div>
+                    <div>• 5 star rating!</div>
+                    <button class="btn">LEARN MORE</button>
+                    <button class="btn">SEE PRICES</button>
+                    <button class="btn">READ REVIEWS</button>
+                </div>
+
+                <div>
+                    <h4 style="color: #f0f;">TESTIMONIALS!!!</h4>
+                    <div class="testimonial">"My dog loved the walk!" - Anonymous</div>
+                    <div class="testimonial">"Great service!" - Dog Owner</div>
+                    <div class="testimonial">"Would use again!" - Happy Customer</div>
+                    <div class="testimonial">"5 stars!" - Another Person</div>
+                    <button class="btn">MORE REVIEWS</button>
+                    <button class="btn">WRITE REVIEW</button>
+                    <button class="btn">VIDEO TESTIMONIALS</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 10px; background: #ffd700; padding: 5px;">
+                <marquee>🐕 SPECIAL OFFER: 10% OFF YOUR FIRST WALK! USE CODE: WOOF10 🐕 LIMITED TIME ONLY! 🐕 BOOK NOW! 🐕</marquee>
+            </div>
         </div>
 
-        <div class="button-container">
-            <button @click="doNothing" class="small-button">Client Lgn</button>
+        <div class="footer">
+            © 2024 PawPals | Terms | Privacy | Contact | Sitemap | Careers | Press | Investors | Partners
         </div>
 
-        <marquee class="marquee">
-            UoA WDC 2207 now offers dog walking services! Book 3 walks, get one free! Contact our student representatives for more info! Terms and conditions apply.
-        </marquee>
+        <div v-if="showPopup" class="popup">
+            <button class="close-btn" @click="showPopup = false">X</button>
+            <h3 style="color: #f00;">MORE DOG INFO!</h3>
+            <p style="font-size: 10px; color: #00f;">This is Fluffy! Fluffy loves long walks, treats, and belly rubs! Book a walk with one of our student walkers today!</p>
+            <button class="btn" @click="showPopup = false">OK</button>
+        </div>
     </div>
 
     <script>
-        const { createApp, ref, onMounted } = Vue
+        const { createApp } = Vue;
 
         createApp({
-            setup() {
-                const dogImage = ref('https://placehold.co/300x200/cccccc/000000?text=Loading...');
-                const dogName = ref('Barnaby');
-                const dogBreed = ref('Supermutt');
-                const dogFact = ref('Loves chasing squirrels and long naps.');
-
-                const fetchDog = async () => {
+            data() {
+                return {
+                    dogImage: '',
+                    showPopup: false
+                }
+            },
+            mounted() {
+                this.loadNewDog();
+            },
+            methods: {
+                async loadNewDog() {
                     try {
                         const response = await fetch('https://dog.ceo/api/breeds/image/random');
                         const data = await response.json();
-                        if (data.status === 'success') {
-                            dogImage.value = data.message;
-                            // Extract breed from URL
-                            try {
-                                const breed = data.message.split('/')[4].replace('-', ' ');
-                                dogBreed.value = breed.charAt(0).toUpperCase() + breed.slice(1);
-                            } catch (e) {
-                                dogBreed.value = 'Unknown';
-                            }
-                        }
+                        this.dogImage = data.message;
                     } catch (error) {
-                        console.error("Failed to fetch dog image:", error);
-                        dogImage.value = 'https://placehold.co/300x200/ff0000/ffffff?text=Error!';
+                        console.error('Error loading dog image:', error);
                     }
-                };
-
-                const doNothing = () => {
-                    // This button literally does nothing, confusing the user.
-                };
-
-                onMounted(() => {
-                    fetchDog();
-                });
-
-                return {
-                    dogImage,
-                    dogName,
-                    dogBreed,
-                    dogFact,
-                    doNothing
                 }
             }
-        }).mount('#app')
+        }).mount('#app');
     </script>
-
 </body>
 </html>
