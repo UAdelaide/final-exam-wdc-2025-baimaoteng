@@ -134,13 +134,6 @@ let db;
         ((SELECT dog_id FROM Dogs WHERE name = 'Cooper'), '2025-06-11 16:30:00', 45, 'Victoria Square', 'open'),
         ((SELECT dog_id FROM Dogs WHERE name = 'Daisy'), '2025-06-12 10:15:00', 30, 'Elder Park', 'completed')
       `);
-
-      // Insert test walk ratings for completed walks
-      await db.execute(`
-        INSERT INTO WalkRatings (request_id, walker_id, owner_id, rating, comments) VALUES
-        (2, 3, 2, 5, 'Excellent walker!'),
-        (2, 3, 2, 4, 'Good service')
-      `);
     }
 
     console.log('Database setup completed successfully');
