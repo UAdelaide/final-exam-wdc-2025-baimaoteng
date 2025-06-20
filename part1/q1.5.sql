@@ -6,7 +6,7 @@ INSERT INTO Users (username, email, password_hash, role) VALUES
 ('lucateng', 'luca.teng@adelaide.edu.au', 'hashedabc', 'owner'),
 ('wdc2207', 'cs2207cc@adelaide.edu.au', 'hashedwdc', 'walker');
 
--- Insert Dogs using subqueries to find owner_id
+-- Insert Dogs
 INSERT INTO Dogs (owner_id, name, size) VALUES
 ((SELECT user_id FROM Users WHERE username = 'alice123'), 'Max', 'medium'),
 ((SELECT user_id FROM Users WHERE username = 'carol123'), 'Bella', 'small'),
