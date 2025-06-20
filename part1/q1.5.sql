@@ -16,14 +16,8 @@ INSERT INTO Dogs (owner_id, name, size) VALUES
 
 -- Insert Walk Requests
 INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location, status) VALUES
--- Request for Max
 ((SELECT dog_id FROM Dogs WHERE name = 'Max'), '2025-06-10 08:00:00', 30, 'Parklands', 'open'),
-
--- Request for Bella
 ((SELECT dog_id FROM Dogs WHERE name = 'Bella'), '2025-06-10 09:30:00', 45, 'Beachside Ave', 'accepted'),
-
--- Additional walk requests
--- Request for Charlie
 ((SELECT dog_id FROM Dogs WHERE name = 'Charlie'), '2025-06-11 07:00:00', 60, 'North Adelaide Park', 'open'),
 
 -- Request for Cooper
