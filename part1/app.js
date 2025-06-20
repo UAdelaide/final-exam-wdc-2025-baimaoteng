@@ -125,14 +125,6 @@ let db;
         ((SELECT user_id FROM Users WHERE username = 'carol123'), 'Daisy', 'small')
       `);
 
-
-      await db.execute(`
-        INSERT INTO Dogs (owner_id, name, size) VALUES
-        (1, 'Max', 'medium'),
-        (2, 'Bella', 'small'),
-        (1, 'Charlie', 'large')
-      `);
-
       // Insert test walk requests
       await db.execute(`
         INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location, status) VALUES
