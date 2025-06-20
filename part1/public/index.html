@@ -123,19 +123,42 @@
     </div>
 
     <script>
-        const { createApp, ref } = Vue
+        const { createApp, ref, onMounted } = Vue
 
         createApp({
             setup() {
-                // Dog details are now fully hardcoded and the API call has been removed.
-                const dogImage = ref('https://placedog.net/300/200?id=101'); // Using a different placeholder for variety
+                const dogImage = ref('https://placehold.co/300x200/cccccc/000000?text=Loading...');
                 const dogName = ref('Barnaby');
                 const dogBreed = ref('Supermutt');
                 const dogFact = ref('Loves chasing squirrels and long naps.');
 
-                const doNothing = () => {
-                    // This button intentionally does nothing to confuse the user.
+                const fetchDog = async () => {
+                    try {
+                        const response = await fetch('https://dog.ceo/api/breeds/image/random');
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            dogImage.value = data.message;
+                            // Extract breed from URL, which is a terrible practice
+                            try {
+                                const breed = data.message.split('/')[4].replace('-', ' ');
+                                dogBreed.value = breed.charAt(0).toUpperCase() + breed.slice(1);
+                            } catch (e) {
+                                dogBreed.value = 'Unknown';
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Failed to fetch dog image:", error);
+                        dogImage.value = 'https://placehold.co/300x200/ff0000/ffffff?text=Error!';
+                    }
                 };
+
+                const doNothing = () => {
+                    // This button literally does nothing, confusing the user.
+                };
+
+                onMounted(() => {
+                    fetchDog();
+                });
 
                 return {
                     dogImage,
