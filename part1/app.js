@@ -128,13 +128,6 @@ let db;
       // Insert test walk requests
       await db.execute(`
         INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location, status) VALUES
-        (1, '2025-06-10 08:00:00', 30, 'Parklands', 'open'),
-        (2, '2025-06-11 09:00:00', 45, 'Central Park', 'completed'),
-        (3, '2025-06-12 10:00:00', 60, 'Beach Walk', 'open')
-      `);
-
-      await db.execute(`
-        INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location, status) VALUES
         ((SELECT dog_id FROM Dogs WHERE name = 'Max'), '2025-06-10 08:00:00', 30, 'Parklands', 'open'),
         ((SELECT dog_id FROM Dogs WHERE name = 'Bella'), '2025-06-10 09:30:00', 45, 'Beachside Ave', 'accepted'),
         ((SELECT dog_id FROM Dogs WHERE name = 'Charlie'), '2025-06-11 07:00:00', 60, 'North Adelaide Park', 'open'),
