@@ -144,7 +144,7 @@ let db;
 
 // API Routes
 
-// Route 1: /api/dogs - Return all dogs with size and owner username
+// Route 1: /api/dogs
 app.get('/api/dogs', async (req, res) => {
   try {
     const [dogs] = await db.execute(`
