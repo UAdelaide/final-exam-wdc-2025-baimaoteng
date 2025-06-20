@@ -22,7 +22,7 @@ INSERT INTO WalkRequests (dog_id, requested_time, duration_minutes, location, st
 -- Request for Bella
 ((SELECT dog_id FROM Dogs WHERE name = 'Bella'), '2025-06-10 09:30:00', 45, 'Beachside Ave', 'accepted'),
 
--- Additional walk requests (3 more as requested)
+-- Additional walk requests
 -- Request for Charlie
 ((SELECT dog_id FROM Dogs WHERE name = 'Charlie'), '2025-06-11 07:00:00', 60, 'North Adelaide Park', 'open'),
 
