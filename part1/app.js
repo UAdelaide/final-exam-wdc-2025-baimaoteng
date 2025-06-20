@@ -20,7 +20,6 @@ let db;
 // Database setup and initialization
 (async () => {
   try {
-    // Connect to MySQL without specifying a database
     const connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
