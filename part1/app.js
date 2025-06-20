@@ -179,7 +179,7 @@ app.get('/api/walkrequests/open', async (req, res) => {
   }
 });
 
-// Route 3: /api/walkers/summary - Return walker summary with ratings and completed walks
+// Route 3: /api/walkers/summary
 app.get('/api/walkers/summary', async (req, res) => {
   try {
     const [walkers] = await db.execute(`
