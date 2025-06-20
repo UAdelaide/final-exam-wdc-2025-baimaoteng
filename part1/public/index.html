@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K9-Kinection: Scholastic Strolls</title>
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+            background-color: #0000FF; /* Bright blue */
+            color: #FFFF00; /* Bright yellow text */
+            text-align: center;
+            overflow: hidden;
+        }
+        #app {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .header {
+            background-color: #FF00FF; /* Magenta */
+            padding: 5px;
+            font-size: 1.2rem;
+            color: #00FF00; /* Lime green */
+        }
+        .blinking-text {
+            animation: blinker 1s linear infinite;
+        }
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+        .dog-of-the-day {
+            margin-top: 20px;
+            border: 5px dotted #FF0000; /* Red */
+            padding: 10px;
+            display: inline-block;
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        .dog-image {
+            width: 300px;
+            height: auto;
+            border: 3px solid #000000;
+        }
+        .button-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
+        .small-button {
+            font-size: 8px;
+            padding: 2px 4px;
+            background-color: #FFA500; /* Orange */
+            color: #000000;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+        .top-right-link {
+            position: absolute;
+            top: 100px;
+            right: 50px;
+            font-size: 10px;
+            transform: rotate(-15deg);
+        }
+        .marquee {
+            width: 100%;
+            overflow: hidden;
+            background-color: #00FFFF; /* Cyan */
+            color: #000000;
+            position: fixed;
+            bottom: 0;
+        }
+        .hidden-nav {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        .container:hover .hidden-nav {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <header class="header blinking-text">
+            K9-Kinection: Your #1 Source for Scholastic Strolls!
+        </header>
+
+        <a href="#" class="top-right-link" style="color: #FFC0CB;">Our Process</a>
+
+        <div class="container" style="position: absolute; top: 150px; left: 10px;">
+            <p style="font-size:12px; color: #ADFF2F;">Hover here for menu!</p>
+            <nav class="hidden-nav">
+                <a href="#" style="color: #000000; background-color: #FFFFFF;">Home</a> |
+                <a href="#" style="color: #000000; background-color: #FFFFFF;">Book Now</a> |
+                <a href="#" style="color: #000000; background-color: #FFFFFF;">Contact</a>
+            </nav>
+        </div>
+
+
+        <div class="dog-of-the-day" style="position: absolute; right: 20px; top: 200px;">
+            <h2>Dog of the Day!</h2>
+            <img :src="dogImage" class="dog-image">
+            <h3>Meet {{ dogName }}</h3>
+            <p><strong>Breed:</strong> {{ dogBreed }}</p>
+            <p><strong>Fact:</strong> {{ dogFact }}</p>
+        </div>
+
+        <div class="button-container">
+            <button @click="doNothing" class="small-button">Client Lgn</button>
+        </div>
+
+        <marquee class="marquee">
+            Special offer this week only! Book 3 walks, get one free! Contact our regional synergizers for more info! We are not responsible for any incidents. Terms and conditions apply.
+        </marquee>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue
+
+        createApp({
+            setup() {
+                const dogImage = ref('https://placehold.co/300x200/cccccc/000000?text=Loading...');
+                const dogName = ref('Barnaby');
+                const dogBreed = ref('Supermutt');
+                const dogFact = ref('Loves chasing squirrels and long naps.');
+
+                const fetchDog = async () => {
+                    try {
+                        const response = await fetch('https://dog.ceo/api/breeds/image/random');
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            dogImage.value = data.message;
+                            // Extract breed from URL, which is a terrible practice
+                            try {
+                                const breed = data.message.split('/')[4].replace('-', ' ');
+                                dogBreed.value = breed.charAt(0).toUpperCase() + breed.slice(1);
+                            } catch (e) {
+                                dogBreed.value = 'Unknown';
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Failed to fetch dog image:", error);
+                        dogImage.value = 'https://placehold.co/300x200/ff0000/ffffff?text=Error!';
+                    }
+                };
+
+                const doNothing = () => {
+                    // This button literally does nothing, confusing the user.
+                };
+
+                onMounted(() => {
+                    fetchDog();
+                });
+
+                return {
+                    dogImage,
+                    dogName,
+                    dogBreed,
+                    dogFact,
+                    doNothing
+                }
+            }
+        }).mount('#app')
+    </script>
+
+</body>
+</html>
