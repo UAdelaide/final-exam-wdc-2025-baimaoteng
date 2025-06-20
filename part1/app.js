@@ -115,15 +115,6 @@ let db;
         ('wdc2207', 'cs2207cc@adelaide.edu.au', 'hashedwdc', 'walker')
       `);
 
-
-      await db.execute(`
-        INSERT INTO Users (username, email, password_hash, role) VALUES
-        ('alice123', 'alice@example.com', 'hashedpass1', 'owner'),
-        ('carol123', 'carol@example.com', 'hashedpass2', 'owner'),
-        ('bobwalker', 'bob@example.com', 'hashedpass3', 'walker'),
-        ('newwalker', 'newwalker@example.com', 'hashedpass4', 'walker')
-      `);
-
       // Insert test dogs
       await db.execute(`
         INSERT INTO Dogs (owner_id, name, size) VALUES
