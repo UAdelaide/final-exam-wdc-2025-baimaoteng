@@ -201,42 +201,28 @@ function login(){
 
 }
 
-// Authentication check for protected pages
-async function checkAuthentication() {
-  try {
-    const response = await fetch('/api/users/me');
-    if (!response.ok) {
-      // Not authenticated, redirect to login
-      window.location.href = '/';
-      return null;
-    }
-    const user = await response.json();
-    return user;
-  } catch (error) {
-    // Error checking auth, redirect to login
-    window.location.href = '/';
-    return null;
-  }
+function saveEdit() {
+
+    // Get textbox and span values
+    var editBox = document.getElementById("edit-box");
+    var staticText = document.getElementById("text-holder");
+
+    // Update the contents
+    staticText.innerHTML = editBox.value;
+
+    // Toggle the visibility
+    editBox.style.display = "none";
+    staticText.style.display = "inline";
+
 }
 
-// Logout function
-async function logout() {
-  try {
-    await fetch('/api/users/logout', { method: 'POST' });
-    window.location.href = '/';
-  } catch (error) {
-    console.error('Logout error:', error);
-    window.location.href = '/';
-  }
-}
+function logout(){
 
-// Check if user has correct role for current page
-function checkUserRole(user, requiredRole) {
-  if (user.role !== requiredRole) {
-    // Wrong role, redirect to correct dashboard
-    const correctUrl = user.role === 'owner' ? '/owner-dashboard.html' : '/walker-dashboard.html';
-    window.location.href = correctUrl;
-    return false;
-  }
-  return true;
+    // Create AJAX Request
+    var xmlhttp = new XMLHttpRequest();
+
+    // Open connection to server & send the post data using a POST request
+    xmlhttp.open("POST", "/users/logout", true);
+    xmlhttp.send();
+
 }
