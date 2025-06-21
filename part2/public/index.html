@@ -50,7 +50,7 @@
             <td>{{ dog.size }}</td>
             <td>{{ dog.owner_id }}</td>
             <td>
-              <img v-if="dog.photoUrl" :src="dog.photoUrl" alt="A random dog photo" style="width: 100px; height: auto; border-radius: 5px;">
+              <img v-if="dog.photoUrl" v-bind:src="dog.photoUrl" alt="A random dog photo" style="width: 100px; height: auto; border-radius: 5px;">
               <span v-else>Loading photo...</span>
             </td>
           </tr>
