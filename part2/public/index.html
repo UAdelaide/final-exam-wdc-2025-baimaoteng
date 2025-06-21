@@ -27,28 +27,6 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
-
-    <h2 class="mt-5">All Registered Dogs</h2>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Dog ID</th>
-          <th>Name</th>
-          <th>Size</th>
-          <th>Owner ID</th>
-          <th>Photo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="dog in dogs" :key="dog.dog_id">
-          <td>{{ dog.dog_id }}</td>
-          <td>{{ dog.name }}</td>
-          <td>{{ dog.size }}</td>
-          <td>{{ dog.owner_id }}</td>
-          <td><img :src="dog.photo" alt="A random dog" style="width: 100px; height: 100px; object-fit: cover;"></td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 
   <script>
@@ -64,33 +42,10 @@
             password: ''
           },
           // Error message to display if login fails
-          error: '',
-          dogs: []
+          error: ''
         };
       },
-      mounted() {
-        this.loadDogs();
-      },
       methods: {
-        async loadDogs() {
-          try {
-            const res = await fetch('/api/dogs');
-            if (!res.ok) throw new Error('Failed to load dogs');
-            let dogsData = await res.json();
-
-            const dogPhotoPromises = dogsData.map(async (dog) => {
-              const photoRes = await fetch('https://dog.ceo/api/breeds/image/random');
-              const photoData = await photoRes.json();
-              dog.photo = photoData.message;
-              return dog;
-            });
-
-            this.dogs = await Promise.all(dogPhotoPromises);
-
-          } catch (err) {
-            this.error = err.message;
-          }
-        },
         // Async login method invoked when the user submits the form
         login: async function () {
           // Clear any previous error
