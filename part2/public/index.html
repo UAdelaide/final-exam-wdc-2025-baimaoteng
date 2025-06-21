@@ -10,11 +10,61 @@
 <body class="bg-light">
 
   <div id="app" class="container py-5">
-    <h1 class="mb-4 text-primary">{{ message }}</h1>
-    <p class="lead">Connect with trusted walkers for your beloved dog!</p>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-body p-5">
+            <h1 class="text-center mb-4 text-primary">{{ message }}</h1>
+            <p class="text-center lead mb-4">Connect with trusted walkers for your beloved dog!</p>
 
-    <a href="owner-dashboard.html" class="btn btn-outline-primary me-2">Owner Dashboard</a>
-    <a href="walker-dashboard.html" class="btn btn-outline-success">Walker Dashboard</a>
+            <div v-if="!user">
+              <form @submit.prevent="login" class="needs-validation" novalidate>
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    v-model="username"
+                    :class="{ 'is-invalid': error }"
+                    required
+                  >
+                  <div v-if="error" class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100"
+                  :disabled="loading || !username.trim()"
+                >
+                  <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
+                  {{ loading ? 'Logging in...' : 'Login' }}
+                </button>
+              </form>
+            </div>
+
+            <div v-else>
+              <div class="text-center">
+                <h3>Welcome, {{ user.username }}!</h3>
+                <p class="text-muted">You are logged in as: {{ user.role }}</p>
+                <div class="d-grid gap-2">
+                  <a
+                    :href="user.role === 'owner' ? 'owner-dashboard.html' : 'walker-dashboard.html'"
+                    class="btn btn-success btn-lg"
+                  >
+                    Go to {{ user.role === 'owner' ? 'Owner' : 'Walker' }} Dashboard
+                  </a>
+                  <button type="button" @click="logout" class="btn btn-outline-secondary">
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -22,8 +72,81 @@
     createApp({
       data() {
         return {
-          message: 'Welcome to the Dog Walking Service!'
+          message: 'Dog Walking Service',
+          username: '',
+          user: null,
+          loading: false,
+          error: ''
         };
+      },
+      async mounted() {
+        // Check if user is already logged in
+        await this.checkSession();
+      },
+      methods: {
+        async checkSession() {
+          try {
+            const response = await fetch('/api/users/me');
+            if (response.ok) {
+              this.user = await response.json();
+            }
+          } catch (error) {
+            console.log('No active session');
+          }
+        },
+        async login() {
+          if (!this.username.trim()) {
+            this.error = 'Please enter a username';
+            return;
+          }
+
+          this.loading = true;
+          this.error = '';
+
+          try {
+            const response = await fetch('/api/users/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                username: this.username
+              })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              this.user = data.user;
+
+              // Redirect based on user role
+              setTimeout(() => {
+                if (data.user.role === 'owner') {
+                  window.location.href = 'owner-dashboard.html';
+                } else if (data.user.role === 'walker') {
+                  window.location.href = 'walker-dashboard.html';
+                }
+              }, 1000);
+            } else {
+              this.error = data.error || 'Login failed';
+            }
+          } catch (error) {
+            this.error = 'Network error. Please try again.';
+          } finally {
+            this.loading = false;
+          }
+        },
+        async logout() {
+          try {
+            await fetch('/api/users/logout', {
+              method: 'POST'
+            });
+            this.user = null;
+            this.username = '';
+          } catch (error) {
+            console.error('Logout error:', error);
+          }
+        }
       }
     }).mount('#app');
   </script>
