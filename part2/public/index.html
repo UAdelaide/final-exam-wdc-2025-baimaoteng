@@ -54,7 +54,7 @@
               <td>{{ dog.size }}</td>
               <td>{{ dog.owner_username }}</td>
               <td>
-                <img :src="dog.photo" alt="Dog photo" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                <img :src="dog.photo || 'https://via.placeholder.com/100x100?text=Dog'" alt="Dog photo" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
               </td>
             </tr>
           </tbody>
@@ -121,8 +121,21 @@
         loadDogs: async function () {
           try {
             const res = await fetch('/api/dogs');
-            const data = await res.json();
-            this.dogs = data.dogs;
+            const dogsData = await res.json();
+
+            // Add random photos to each dog
+            for (let dog of dogsData) {
+              try {
+                const photoRes = await fetch('https://dog.ceo/api/breeds/image/random');
+                const photoData = await photoRes.json();
+                dog.photo = photoData.message;
+              } catch (err) {
+                // Fallback image if API fails
+                dog.photo = 'https://via.placeholder.com/100x100?text=Dog';
+              }
+            }
+
+            this.dogs = dogsData;
             this.dogsLoading = false;
           } catch (err) {
             console.error('Error loading dogs:', err);
