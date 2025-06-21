@@ -201,6 +201,21 @@ function login(){
 
 }
 
+function saveEdit() {
+
+    // Get textbox and span values
+    var editBox = document.getElementById("edit-box");
+    var staticText = document.getElementById("text-holder");
+
+    // Update the contents
+    staticText.innerHTML = editBox.value;
+
+    // Toggle the visibility
+    editBox.style.display = "none";
+    staticText.style.display = "inline";
+
+}
+
 function logout(){
 
     // Create AJAX Request
