@@ -27,36 +27,6 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
-
-    <div class="mt-5">
-      <h2 class="mb-3">All Registered Dogs</h2>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Dog ID</th>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Owner ID</th>
-            <th>Photo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="dogs.length === 0">
-            <td colspan="5" class="text-center">Loading dogs...</td>
-          </tr>
-          <tr v-for="dog in dogs" :key="dog.dog_id">
-            <td>{{ dog.dog_id }}</td>
-            <td>{{ dog.name }}</td>
-            <td>{{ dog.size }}</td>
-            <td>{{ dog.owner_id }}</td>
-            <td>
-              <img v-if="dog.photoUrl" v-bind:src="dog.photoUrl" alt="A random dog photo" style="width: 100px; height: auto; border-radius: 5px;">
-              <span v-else>Loading photo...</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 
   <script>
@@ -72,8 +42,7 @@
             password: ''
           },
           // Error message to display if login fails
-          error: '',
-          dogs: []
+          error: ''
         };
       },
       methods: {
@@ -109,34 +78,7 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
-        },
-        loadDogs: async function () {
-          try {
-            const res = await fetch('/api/dogs');
-            if (!res.ok) throw new Error('Failed to load dogs list');
-            const dogsData = await res.json();
-            this.dogs = dogsData.map(d => ({ ...d, photoUrl: null }));
-
-            this.dogs.forEach(async (dog) => {
-              try {
-                const photoRes = await fetch('https://dog.ceo/api/breeds/image/random');
-                if (!photoRes.ok) throw new Error('Failed to load photo');
-                const photoData = await photoRes.json();
-                if (photoData.status === 'success') {
-                  dog.photoUrl = photoData.message;
-                }
-              } catch (photoErr) {
-                console.error(`Failed to load photo for dog ${dog.dog_id}:`, photoErr);
-              }
-            });
-          } catch (err) {
-            console.error(err);
-            this.error = 'Could not load the list of dogs.';
-          }
         }
-      },
-      created() {
-        this.loadDogs();
       }
     }).mount('#app');
   </script>
