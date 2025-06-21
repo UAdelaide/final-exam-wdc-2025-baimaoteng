@@ -42,14 +42,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="dog in dogs" :key="dog.dog_id">
-            <td>{{ dog.dog_id }}</td>
-            <td>{{ dog.name }}</td>
-            <td>{{ dog.size }}</td>
-            <td>{{ dog.owner_id }}</td>
-            <!-- html-validate-disable-next-line attribute-required -->
-            <td><img :src="dog.photo" alt="A cute dog" style="width: 100px; height: 100px; object-fit: cover;"></td>
-          </tr>
+          <template v-for="dog in dogs" :key="dog.dog_id">
+            <tr>
+              <td>{{ dog.dog_id }}</td>
+              <td>{{ dog.name }}</td>
+              <td>{{ dog.size }}</td>
+              <td>{{ dog.owner_id }}</td>
+              <!-- html-validate-disable-next-line attribute-required -->
+              <td><img :src="dog.photo" alt="A cute dog" style="width: 100px; height: 100px; object-fit: cover;"></td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>
