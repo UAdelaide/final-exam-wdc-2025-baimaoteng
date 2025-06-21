@@ -35,13 +35,13 @@ router.get('/me', (req, res) => {
   res.json(req.session.user);
 });
 
-// POST login (dummy version)
+// POST login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const [rows] = await db.query(`
-      SELECT user_id, username, role FROM Users
+      SELECT user_id, username, email, role FROM Users
       WHERE email = ? AND password_hash = ?
     `, [email, password]);
 
@@ -49,10 +49,27 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    res.json({ message: 'Login successful', user: rows[0] });
+    // Store user in session
+    req.session.user = rows[0];
+
+    res.json({
+      message: 'Login successful',
+      user: rows[0],
+      redirectUrl: rows[0].role === 'owner' ? '/owner-dashboard.html' : '/walker-dashboard.html'
+    });
   } catch (error) {
     res.status(500).json({ error: 'Login failed' });
   }
+});
+
+// POST logout
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Could not log out' });
+    }
+    res.json({ message: 'Logged out successfully' });
+  });
 });
 
 module.exports = router;
