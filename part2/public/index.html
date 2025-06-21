@@ -48,6 +48,7 @@
           // Clear any previous error
           this.error = '';
           try {
+            // Send login request to the server
             const res = await fetch('/api/users/login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
