@@ -24,22 +24,5 @@ const userRoutes = require('./routes/userRoutes');
 app.use('/api/walks', walkRoutes);
 app.use('/api/users', userRoutes);
 
-// Add dogs endpoint from part1
-app.get('/api/dogs', async (req, res) => {
-  const db = require('./models/db');
-  try {
-    const [dogs] = await db.query(`
-      SELECT d.dog_id, d.name AS dog_name, d.size, u.username AS owner_username
-      FROM Dogs d
-      JOIN Users u ON d.owner_id = u.user_id
-      ORDER BY d.name
-    `);
-    res.json(dogs);
-  } catch (err) {
-    console.error('Error fetching dogs:', err);
-    res.status(500).json({ error: 'Failed to fetch dogs' });
-  }
-});
-
 // Export the app instead of listening here
 module.exports = app;
