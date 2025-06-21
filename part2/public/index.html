@@ -27,6 +27,30 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
+
+    <div v-if="dogs.length" class="mt-5">
+      <h3 class="mb-3">All Registered Dogs</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Owner</th>
+            <th>Photo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(dog, index) in dogs" :key="index">
+            <td>{{ index + 1 }}</td>
+            <td>{{ dog.dog_name }}</td>
+            <td>{{ dog.size }}</td>
+            <td>{{ dog.owner_username }}</td>
+            <td><img :src="dog.photo" alt="dog photo" style="width:60px; height:60px; object-fit:cover;"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -42,7 +66,8 @@
             password: ''
           },
           // Error message to display if login fails
-          error: ''
+          error: '',
+          dogs: []
         };
       },
       methods: {
@@ -78,7 +103,31 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
+        },
+        loadDogs: async function () {
+          try {
+            const res = await fetch('/api/dogs');
+            if (!res.ok) throw new Error('Failed to load dogs');
+            const dogsData = await res.json();
+            // For each dog, fetch random photo
+            const dogsWithPhotos = await Promise.all(dogsData.map(async (dog) => {
+              try {
+                const photoRes = await fetch('https://dog.ceo/api/breeds/image/random');
+                const photoJson = await photoRes.json();
+                dog.photo = photoJson.message;
+              } catch (e) {
+                dog.photo = '';
+              }
+              return dog;
+            }));
+            this.dogs = dogsWithPhotos;
+          } catch (e) {
+            console.error(e);
+          }
         }
+      },
+      mounted() {
+        this.loadDogs();
       }
     }).mount('#app');
   </script>
