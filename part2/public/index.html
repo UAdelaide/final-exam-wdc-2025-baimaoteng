@@ -27,6 +27,34 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
+
+    <!-- Dogs table -->
+    <h2 class="mt-5 text-center">All Registered Dogs</h2>
+    <div class="table-responsive">
+      <table v-if="dogs.length > 0" class="table table-striped align-middle text-center">
+        <thead class="table-light">
+          <tr>
+            <th>Dog ID</th>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Owner ID</th>
+            <th>Photo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="dog in dogs" :key="dog.dog_id">
+            <td>{{ dog.dog_id }}</td>
+            <td>{{ dog.name }}</td>
+            <td>{{ dog.size }}</td>
+            <td>{{ dog.owner_id }}</td>
+            <td>
+              <img v-if="dog.image" :src="dog.image" alt="Dog photo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else class="text-center">Loading dog list...</p>
+    </div>
   </div>
 
   <script>
@@ -42,7 +70,8 @@
             password: ''
           },
           // Error message to display if login fails
-          error: ''
+          error: '',
+          dogs: []
         };
       },
       methods: {
@@ -78,7 +107,32 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
+        },
+        loadDogs: async function () {
+          try {
+            const res = await fetch('/api/dogs');
+            if (!res.ok) throw new Error('Failed to load dogs');
+            const list = await res.json();
+            // Fetch images for each dog in parallel
+            const dogsWithImg = await Promise.all(
+              list.map(async (d) => {
+                try {
+                  const imgRes = await fetch('https://dog.ceo/api/breeds/image/random');
+                  const imgData = await imgRes.json();
+                  return { ...d, image: imgData.message };
+                } catch (_) {
+                  return { ...d, image: '' };
+                }
+              })
+            );
+            this.dogs = dogsWithImg;
+          } catch (err) {
+            this.error = err.message;
+          }
         }
+      },
+      mounted() {
+        this.loadDogs();
       }
     }).mount('#app');
   </script>
