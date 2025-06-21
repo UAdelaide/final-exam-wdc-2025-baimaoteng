@@ -2,14 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 
-// Middleware to check if user is authenticated
-function requireAuth(req, res, next) {
-  if (!req.session.user) {
-    return res.status(401).json({ error: 'Authentication required' });
-  }
-  next();
-}
-
 // GET all users (for admin/testing)
 router.get('/', async (req, res) => {
   try {
@@ -36,46 +28,31 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// GET current user session
-router.get('/me', requireAuth, (req, res) => {
+router.get('/me', (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
   res.json(req.session.user);
 });
 
-// POST login
+// POST login (dummy version)
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     const [rows] = await db.query(`
-      SELECT user_id, username, email, role FROM Users
-      WHERE username = ? AND password_hash = ?
-    `, [username, password]);
+      SELECT user_id, username, role FROM Users
+      WHERE email = ? AND password_hash = ?
+    `, [email, password]);
 
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = rows[0];
-    req.session.user = user;
-
-    res.json({
-      message: 'Login successful',
-      user: user,
-      redirectUrl: user.role === 'owner' ? '/owner-dashboard.html' : '/walker-dashboard.html'
-    });
+    res.json({ message: 'Login successful', user: rows[0] });
   } catch (error) {
     res.status(500).json({ error: 'Login failed' });
   }
-});
-
-// POST logout
-router.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Could not log out' });
-    }
-    res.json({ message: 'Logged out successfully' });
-  });
 });
 
 module.exports = router;
