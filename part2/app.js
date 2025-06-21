@@ -1,11 +1,20 @@
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dogwalk-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // Set to true in production with HTTPS
+}));
 app.use(express.static(path.join(__dirname, '/public')));
 
 // Routes
