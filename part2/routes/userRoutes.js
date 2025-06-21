@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
 
 // POST logout
 router.post('/logout', (req, res) => {
-  req.session.destroy(err => {
+  req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: 'Logout failed' });
     }
@@ -68,6 +68,24 @@ router.post('/logout', (req, res) => {
     res.clearCookie('connect.sid');
     res.json({ message: 'Logged out' });
   });
+});
+
+// GET dogs owned by the logged-in user
+router.get('/my-dogs', async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+
+  try {
+    const [rows] = await db.query(`
+      SELECT dog_id, name, size FROM Dogs
+      WHERE owner_id = ?
+    `, [req.session.user.user_id]);
+
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch dogs' });
+  }
 });
 
 module.exports = router;
