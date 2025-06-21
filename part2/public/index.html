@@ -27,32 +27,6 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
-
-    <!-- Dogs Table -->
-    <h2 class="mt-5">All Registered Dogs</h2>
-    <table v-if="dogs.length > 0" class="table table-striped mt-3">
-      <thead>
-        <tr>
-          <th>Dog ID</th>
-          <th>Name</th>
-          <th>Size</th>
-          <th>Owner ID</th>
-          <th>Photo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="dog in dogs" :key="dog.dog_id">
-          <td>{{ dog.dog_id }}</td>
-          <td>{{ dog.name }}</td>
-          <td>{{ dog.size }}</td>
-          <td>{{ dog.owner_id }}</td>
-          <td>
-            <img src="about:blank" :src="dog.photo" alt="Dog photo" style="width: 80px; height: 80px; object-fit: cover;" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p v-else class="mt-3">Loading dogs...</p>
   </div>
 
   <script>
@@ -68,8 +42,7 @@
             password: ''
           },
           // Error message to display if login fails
-          error: '',
-          dogs: []
+          error: ''
         };
       },
       methods: {
@@ -105,33 +78,7 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
-        },
-        loadDogs: async function () {
-          try {
-            const res = await fetch('/api/dogs');
-            if (!res.ok) throw new Error('Failed to fetch dogs');
-            const dogsData = await res.json();
-
-            // Fetch random image for each dog
-            const dogsWithPhotos = await Promise.all(dogsData.map(async (dog) => {
-              try {
-                const imgRes = await fetch('https://dog.ceo/api/breeds/image/random');
-                const imgData = await imgRes.json();
-                dog.photo = imgData.message;
-              } catch (_) {
-                dog.photo = '';
-              }
-              return dog;
-            }));
-
-            this.dogs = dogsWithPhotos;
-          } catch (err) {
-            this.error = err.message;
-          }
         }
-      },
-      mounted() {
-        this.loadDogs();
       }
     }).mount('#app');
   </script>
