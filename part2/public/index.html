@@ -27,39 +27,6 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
-
-    <!-- All Registered Dogs Table -->
-    <div class="mt-5">
-      <h2 class="mb-4 text-secondary">All Registered Dogs</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark">
-            <tr>
-              <th>Dog ID</th>
-              <th>Name</th>
-              <th>Size</th>
-              <th>Owner ID</th>
-              <th>Photo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="dog in dogs" :key="dog.dog_id">
-              <td>{{ dog.dog_id }}</td>
-              <td>{{ dog.dog_name }}</td>
-              <td>{{ dog.size }}</td>
-              <td>{{ dog.owner_username }}</td>
-              <td>
-                                                                <img src="https://via.placeholder.com/80x80" :src="dog.photo"
-                     alt="Random dog photo"
-                     class="img-thumbnail"
-                     style="width: 80px; height: 80px; object-fit: cover;">
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p v-if="dogs.length === 0" class="text-muted">Loading dogs...</p>
-    </div>
   </div>
 
   <script>
@@ -75,9 +42,7 @@
             password: ''
           },
           // Error message to display if login fails
-          error: '',
-          // Dogs data
-          dogs: []
+          error: ''
         };
       },
       methods: {
@@ -113,30 +78,7 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
-        },
-
-        // Load all dogs from the database
-        loadDogs: async function () {
-          try {
-            const res = await fetch('/api/dogs');
-            if (!res.ok) throw new Error('Failed to load dogs');
-            const dogsData = await res.json();
-
-            // Add random dog photos to each dog
-            for (let dog of dogsData) {
-              const photoRes = await fetch('https://dog.ceo/api/breeds/image/random');
-              const photoData = await photoRes.json();
-              dog.photo = photoData.message;
-            }
-
-            this.dogs = dogsData;
-          } catch (err) {
-            console.error('Error loading dogs:', err);
-          }
         }
-      },
-      mounted() {
-        this.loadDogs();
       }
     }).mount('#app');
   </script>
