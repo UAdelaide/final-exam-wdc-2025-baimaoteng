@@ -37,25 +37,20 @@ router.get('/me', (req, res) => {
 
 // POST login (dummy version)
 router.post('/login', async (req, res) => {
-  const { username } = req.body;
+  const { email, password } = req.body;
 
   try {
-    // Find the user by username only (password not required for this exam task)
-    const [rows] = await db.query(
-      `SELECT user_id, username, role FROM Users WHERE username = ?`,
-      [username]
-    );
+    const [rows] = await db.query(`
+      SELECT user_id, username, role FROM Users
+      WHERE email = ? AND password_hash = ?
+    `, [email, password]);
 
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'User not found' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Store the user information in the session
-    req.session.user = rows[0];
-
-    res.json({ message: 'Login successful', role: rows[0].role });
+    res.json({ message: 'Login successful', user: rows[0] });
   } catch (error) {
-    console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed' });
   }
 });
