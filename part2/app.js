@@ -3,7 +3,6 @@ const path = require('path');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const db = require('./models/db');
 
 const app = express();
 
@@ -21,21 +20,6 @@ app.use(session({
 // Routes
 const walkRoutes = require('./routes/walkRoutes');
 const userRoutes = require('./routes/userRoutes');
-
-// Add dogs API endpoint
-app.get('/api/dogs', async (req, res) => {
-  try {
-    const [rows] = await db.query(`
-      SELECT d.dog_id, d.name, d.size, d.owner_id
-      FROM Dogs d
-      ORDER BY d.name
-    `);
-    res.json(rows);
-  } catch (error) {
-    console.error('Error fetching dogs:', error);
-    res.status(500).json({ error: 'Failed to fetch dogs' });
-  }
-});
 
 app.use('/api/walks', walkRoutes);
 app.use('/api/users', userRoutes);
