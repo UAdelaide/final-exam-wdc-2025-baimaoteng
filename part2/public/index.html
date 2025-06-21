@@ -45,6 +45,7 @@
       methods: {
         // Async login method invoked when the user submits the form
         login: async function () {
+          // Clear any previous error
           this.error = '';
           try {
             const res = await fetch('/api/users/login', {
