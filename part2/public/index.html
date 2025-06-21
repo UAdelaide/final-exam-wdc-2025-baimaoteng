@@ -27,6 +27,32 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
+
+    <div v-if="dogs.length" class="mt-5">
+      <h2 class="mb-3">All Registered Dogs</h2>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Dog ID</th>
+              <th>Name</th>
+              <th>Size</th>
+              <th>Owner</th>
+              <th>Photo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="d in dogs" :key="d.dog_id">
+              <td>{{ d.dog_id }}</td>
+              <td>{{ d.name }}</td>
+              <td>{{ d.size }}</td>
+              <td>{{ d.owner_username }}</td>
+              <td><img :src="d.photo" alt="dog photo" style="width: 80px; height: 80px; object-fit: cover;" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -42,7 +68,8 @@
             password: ''
           },
           // Error message to display if login fails
-          error: ''
+          error: '',
+          dogs: []
         };
       },
       methods: {
@@ -78,7 +105,19 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
+        },
+        fetchDogs: async function () {
+          try {
+            const res = await fetch('/api/dogs');
+            const data = await res.json();
+            this.dogs = data;
+          } catch (err) {
+            console.error('Error fetching dogs:', err);
+          }
         }
+      },
+      mounted() {
+        this.fetchDogs();
       }
     }).mount('#app');
   </script>
