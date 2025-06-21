@@ -9,10 +9,7 @@
 </head>
 <body class="bg-light">
   <div id="app" class="container py-4">
-    <h1 class="mb-4 text-success d-flex justify-content-between align-items-center">
-      <span>Walker Dashboard</span>
-      <button type="button" class="btn btn-outline-secondary" @click="logout">Logout</button>
-    </h1>
+    <h1 class="mb-4 text-success">Walker Dashboard</h1>
 
     <!-- Alert messages -->
     <div v-if="message" class="alert alert-info">{{ message }}</div>
@@ -77,15 +74,6 @@
           }
         }
 
-        // Logout function
-        async function logout() {
-          try {
-            await fetch('/api/users/logout', { method: 'POST' });
-          } finally {
-            window.location.href = 'index.html';
-          }
-        }
-
         onMounted(() => {
           loadWalkRequests();
         });
@@ -94,8 +82,7 @@
           walks,
           message,
           error,
-          applyToWalk,
-          logout
+          applyToWalk
         };
       }
     }).mount('#app');
