@@ -56,6 +56,7 @@
             });
             // Parse the JSON response
             const result = await res.json();
+            // If the login fails, throw an error
             if (!res.ok) {
               throw new Error(result.error || 'Login failed');
             }
