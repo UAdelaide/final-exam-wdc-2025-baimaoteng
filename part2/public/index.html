@@ -27,32 +27,6 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
-
-    <div v-if="dogs.length" class="mt-5">
-      <h3 class="mb-3">All Registered Dogs</h3>
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>Dog ID</th>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Owner</th>
-            <th>Photo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="dog in dogs" :key="dog.dog_id">
-            <td>{{ dog.dog_id }}</td>
-            <td>{{ dog.dog_name || dog.name }}</td>
-            <td>{{ dog.size }}</td>
-            <td>{{ dog.owner_username }}</td>
-            <td>
-              <img src="https://via.placeholder.com/80" :src="dog.photo || 'https://via.placeholder.com/80'" alt="dog photo" style="max-width:80px; max-height:80px; object-fit:cover;">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 
   <script>
@@ -68,8 +42,7 @@
             password: ''
           },
           // Error message to display if login fails
-          error: '',
-          dogs: []
+          error: ''
         };
       },
       methods: {
@@ -105,34 +78,7 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
-        },
-        async loadDogs() {
-          try {
-            const res = await fetch('/api/dogs');
-            if (!res.ok) throw new Error('Failed to fetch dogs');
-            const list = await res.json();
-            // Append photo property
-            this.dogs = list.map(d => ({ ...d, photo: '' }));
-
-            // Fetch random images in parallel
-            await Promise.all(
-              this.dogs.map(async (dog) => {
-                try {
-                  const imgRes = await fetch('https://dog.ceo/api/breeds/image/random');
-                  const imgData = await imgRes.json();
-                  dog.photo = imgData.message;
-                } catch (_) {
-                  dog.photo = '';
-                }
-              })
-            );
-          } catch (e) {
-            console.error(e);
-          }
         }
-      },
-      mounted() {
-        this.loadDogs();
       }
     }).mount('#app');
   </script>
