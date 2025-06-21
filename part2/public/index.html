@@ -76,7 +76,7 @@
             <td class="text-capitalize">{{ dog.size }}</td>
             <td>{{ dog.owner_id }}</td>
             <td>
-              <img :src="dog.photo" :alt="dog.name + ' photo'" class="dog-photo">
+              <img :src="dog.photo" :alt="`${dog.name} photo`" class="dog-photo" src="">
             </td>
           </tr>
         </tbody>
@@ -142,9 +142,31 @@
         // Fetch dogs data
         fetchDogs: async function () {
           try {
+            this.loading = true;
             const res = await fetch('/api/dogs');
             const data = await res.json();
-            this.dogs = data;
+
+            // Fetch random dog photos for each dog
+            const dogsWithPhotos = await Promise.all(
+              data.map(async (dog) => {
+                try {
+                  const photoRes = await fetch('https://dog.ceo/api/breeds/image/random');
+                  const photoData = await photoRes.json();
+                  return {
+                    ...dog,
+                    photo: photoData.message
+                  };
+                } catch (err) {
+                  console.error('Error fetching photo for dog:', dog.name, err);
+                  return {
+                    ...dog,
+                    photo: 'https://via.placeholder.com/80x80?text=No+Photo'
+                  };
+                }
+              })
+            );
+
+            this.dogs = dogsWithPhotos;
             this.loading = false;
           } catch (err) {
             console.error('Error fetching dogs:', err);
