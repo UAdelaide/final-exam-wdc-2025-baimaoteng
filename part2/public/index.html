@@ -48,7 +48,8 @@
             <td>{{ dog.size }}</td>
             <td>{{ dog.owner_id }}</td>
             <td>
-              <img src="" :src="dog.image || 'https://via.placeholder.com/80'" alt="Dog photo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+              <!-- html-validate-disable-next-line -->
+              <img :src="dog.image || 'https://via.placeholder.com/80'" alt="Dog photo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
             </td>
           </tr>
         </tbody>
