@@ -110,7 +110,20 @@
           try {
             const res = await fetch('/api/dogs');
             const data = await res.json();
-            this.dogs = data;
+            // For each dog fetch a random photo in parallel
+            const dogsWithPhotos = await Promise.all(
+              data.map(async (d) => {
+                try {
+                  const imgRes = await fetch('https://dog.ceo/api/breeds/image/random');
+                  const imgJson = await imgRes.json();
+                  d.photo = imgJson.message;
+                } catch (e) {
+                  d.photo = 'https://via.placeholder.com/80';
+                }
+                return d;
+              })
+            );
+            this.dogs = dogsWithPhotos;
           } catch (err) {
             console.error('Error fetching dogs:', err);
           }
