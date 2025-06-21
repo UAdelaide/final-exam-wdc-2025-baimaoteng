@@ -62,6 +62,7 @@
             }
             // Get the user's role from the response
             const role = result.user.role;
+            // Redirect based on the user's role
             if (role === 'owner') {
               window.location.href = 'owner-dashboard.html';
             } else if (role === 'walker') {
