@@ -27,6 +27,31 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
+
+    <!-- All Registered Dogs Table -->
+    <div class="mt-5">
+      <h2 class="mb-3">All Registered Dogs</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Dog ID</th>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Owner ID</th>
+            <th>Photo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="dog in dogs" :key="dog.dog_id">
+            <td>{{ dog.dog_id }}</td>
+            <td>{{ dog.name }}</td>
+            <td>{{ dog.size }}</td>
+            <td>{{ dog.owner_id }}</td>
+            <td><img :src="dog.photo" alt="A cute dog" style="width: 100px; height: 100px; object-fit: cover;"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -42,10 +67,37 @@
             password: ''
           },
           // Error message to display if login fails
-          error: ''
+          error: '',
+          dogs: []
         };
       },
+      mounted() {
+        this.loadDogs();
+      },
       methods: {
+        loadDogs: async function () {
+          try {
+            const res = await fetch('/api/dogs');
+            if (!res.ok) {
+              throw new Error('Failed to load dogs');
+            }
+            let dogsData = await res.json();
+
+            const photoPromises = dogsData.map(() =>
+              fetch('https://dog.ceo/api/breeds/image/random').then(res => res.json())
+            );
+
+            const photos = await Promise.all(photoPromises);
+
+            dogsData.forEach((dog, index) => {
+              dog.photo = photos[index].message;
+            });
+
+            this.dogs = dogsData;
+          } catch (err) {
+            console.error(err.message);
+          }
+        },
         // Async login method invoked when the user submits the form
         login: async function () {
           // Clear any previous error
