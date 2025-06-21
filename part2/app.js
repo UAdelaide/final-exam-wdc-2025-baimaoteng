@@ -1,17 +1,8 @@
 const express = require('express');
 const path = require('path');
-const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
-
-// Session configuration
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false } // Set to true if using HTTPS
-}));
 
 // Middleware
 app.use(express.json());
