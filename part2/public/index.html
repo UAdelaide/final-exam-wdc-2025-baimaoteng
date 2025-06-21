@@ -76,7 +76,7 @@
             <td class="text-capitalize">{{ dog.size }}</td>
             <td>{{ dog.owner_id }}</td>
             <td>
-              <img :src="dog.photo" :alt="`${dog.name} photo`" class="dog-photo" src="">
+              <img :src="dog.photo || 'https://via.placeholder.com/80x80?text=Loading'" :alt="dog.name + ' photo'" class="dog-photo">
             </td>
           </tr>
         </tbody>
