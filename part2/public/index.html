@@ -27,6 +27,32 @@
     </form>
 
     <div v-if="error" class="alert alert-danger mt-3" role="alert">{{ error }}</div>
+
+    <!-- Dogs Table -->
+    <div class="mt-5">
+      <h2 class="mb-3">All Registered Dogs</h2>
+      <table v-if="dogs.length" class="table table-striped table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Size</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Photo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(dog, index) in dogs" :key="index">
+            <td>{{ index + 1 }}</td>
+            <td>{{ dog.dog_name || dog.name }}</td>
+            <td>{{ dog.size }}</td>
+            <td>{{ dog.owner_username || dog.owner }}</td>
+            <td><img :src="dog.photo" alt="Dog photo" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;"></td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>Loading dogs...</p>
+    </div>
   </div>
 
   <script>
@@ -42,7 +68,8 @@
             password: ''
           },
           // Error message to display if login fails
-          error: ''
+          error: '',
+          dogs: []
         };
       },
       methods: {
@@ -78,7 +105,32 @@
             // If an error occurs, show the error message
             this.error = err.message;
           }
+        },
+        fetchDogs: async function () {
+          try {
+            const res = await fetch('/api/dogs');
+            if (!res.ok) throw new Error('Failed to load dogs');
+            const list = await res.json();
+            // Attach random photo to each dog
+            const dogsWithPhotos = await Promise.all(
+              list.map(async (d) => {
+                try {
+                  const pRes = await fetch('https://dog.ceo/api/breeds/image/random');
+                  const pData = await pRes.json();
+                  return { ...d, photo: pData.message };
+                } catch (e) {
+                  return { ...d, photo: '' };
+                }
+              })
+            );
+            this.dogs = dogsWithPhotos;
+          } catch (e) {
+            console.error(e);
+          }
         }
+      },
+      mounted() {
+        this.fetchDogs();
       }
     }).mount('#app');
   </script>
