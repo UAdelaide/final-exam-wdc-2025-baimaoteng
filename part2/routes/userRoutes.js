@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const [rows] = await db.query(`
-      SELECT user_id, username, email, role FROM Users
+      SELECT user_id, username, role FROM Users
       WHERE email = ? AND password_hash = ?
     `, [email, password]);
 
@@ -49,30 +49,10 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Store user in session
-    req.session.user = rows[0];
-
-    // Determine redirect URL based on role
-    const redirectUrl = rows[0].role === 'owner' ? '/owner-dashboard.html' : '/walker-dashboard.html';
-
-    res.json({
-      message: 'Login successful',
-      user: rows[0],
-      redirectUrl: redirectUrl
-    });
+    res.json({ message: 'Login successful', user: rows[0] });
   } catch (error) {
     res.status(500).json({ error: 'Login failed' });
   }
-});
-
-// POST logout
-router.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Logout failed' });
-    }
-    res.json({ message: 'Logged out successfully' });
-  });
 });
 
 module.exports = router;
