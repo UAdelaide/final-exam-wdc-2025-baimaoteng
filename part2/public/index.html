@@ -54,6 +54,7 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(this.form)
             });
+            // Parse the JSON response
             const result = await res.json();
             if (!res.ok) {
               throw new Error(result.error || 'Login failed');
