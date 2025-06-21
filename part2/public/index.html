@@ -49,8 +49,8 @@
               <td>{{ dog.size }}</td>
               <td>{{ dog.owner_id }}</td>
               <td>
-                <img v-if="dog.photo" :src="dog.photo" alt="Dog photo"
-                     class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                <img v-if="dog.photo" :src="dog.photo" alt="Dog photo"
+                     class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;" />
                 <div v-else class="text-muted">Loading...</div>
               </td>
             </tr>
