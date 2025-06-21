@@ -3,6 +3,7 @@ const path = require('path');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const db = require('./models/db');
 
 const app = express();
 
@@ -23,7 +24,6 @@ const userRoutes = require('./routes/userRoutes');
 
 // Add dogs API endpoint
 app.get('/api/dogs', async (req, res) => {
-  const db = require('./models/db');
   try {
     const [rows] = await db.query(`
       SELECT d.dog_id, d.name, d.size, d.owner_id
